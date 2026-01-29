@@ -22,5 +22,9 @@ defineProps<IProps>();
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
+
+  &--selected {
+    border: 2px solid rgb(32, 180, 32);
+  }
 }
 </style>

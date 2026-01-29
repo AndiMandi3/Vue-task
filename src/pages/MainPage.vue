@@ -5,11 +5,13 @@ import UserItemsSummary from "@/components/UserItemsSummary.vue";
 import SelectedItem from "@/components/SelectedItem.vue";
 import UserItemsList from "@/components/UserItemsList.vue";
 import AvailableItemsList from "@/components/AvailableItemsList.vue";
+import BaseButton from "@/components/BaseButton.vue"
 
 const selectedUserItemIds = ref<number[]>([]);
 const selectedAvailableItemId = ref<number | null>(null);
 
 const selectedAvailableItem = computed(() => availableItems.find(i => i.id === selectedAvailableItemId.value) ?? null);
+const selectedUserItems = computed(() => userItems.filter(item => selectedUserItemIds.value.includes(item.id)));
 
 const onSelectUserItem = (id: number) => {
   const index = selectedUserItemIds.value.indexOf(id);
@@ -28,6 +30,11 @@ const onSelectAvailableItem = (id: number) => {
   selectedAvailableItemId.value = id;
 }
 
+const resetSelection = (): void => {
+  selectedUserItemIds.value = [];
+  selectedAvailableItemId.value = null;
+}
+
 </script>
 
 <template>
@@ -35,8 +42,9 @@ const onSelectAvailableItem = (id: number) => {
     <div class="main-page__row main-page__row--top">
       <div class="main-page__col">
         <UserItemsSummary 
+          :items="selectedUserItems"
           :selected-count="selectedUserItemIds.length" 
-          :total="6"
+          :limit="6"
         />
       </div>
       <div class="main-page__col">
@@ -63,6 +71,9 @@ const onSelectAvailableItem = (id: number) => {
           @select="onSelectAvailableItem" 
         />
       </div>
+    </div>
+    <div class="main-page__row">
+      <BaseButton @click="resetSelection">Reset all</BaseButton>
     </div>
   </div>
 
