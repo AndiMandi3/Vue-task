@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Item } from "@/types/item.type";
-import ItemCard from "./ItemCard.vue";
+import type { Item } from "@/types/item.type.ts";
+import ItemCard from "@/components/item/ItemCard.vue";
 
 interface IProps {
   items: Item[],
-  selectedIds: number[],
+  selectedId: number | null,
 }
 
 interface IEmits {
@@ -16,19 +16,19 @@ const emit = defineEmits<IEmits>();
 </script>
 
 <template>
-  <div class="user-items-list">
+  <div class="available-items-list">
     <ItemCard
       v-for="item in items"
       :key="item.id"
       :item="item"
-      :selected="selectedIds.includes(item.id)"
+      :selected="item.id === selectedId"
       @click="emit('select', item.id)"
     />
   </div>
 </template>
 
 <style scoped lang="scss">
-.user-items-list {
+.available-items-list {
   flex: 1 1 auto;
   display: flex;
   flex-wrap: wrap;

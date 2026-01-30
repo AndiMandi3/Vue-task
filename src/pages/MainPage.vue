@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { availableItems, userItems } from "@/consts/items.const";
-import UserItemsSummary from "@/components/UserItemsSummary.vue";
-import SelectedItem from "@/components/SelectedItem.vue";
-import UserItemsList from "@/components/UserItemsList.vue";
-import AvailableItemsList from "@/components/AvailableItemsList.vue";
-import BaseButton from "@/components/BaseButton.vue"
+import { availableItems, userItems } from "@/data/items.ts";
+import { useItemActions } from "@/composible/useItemActions.ts";
+import UserItemsSummary from "@/components/user-items/UserItemsSummary.vue";
+import AvailableSelectedItem from "@/components/available-items/AvailableSelectedItem.vue";
+import UserItemsList from "@/components/user-items/UserItemsList.vue";
+import AvailableItemsList from "@/components/available-items/AvailableItemsList.vue";
+import BaseButton from "@/components/ui/BaseButton.vue"
 
 const selectedUserItemIds = ref<number[]>([]);
 const selectedAvailableItemId = ref<number | null>(null);
@@ -13,70 +14,59 @@ const selectedAvailableItemId = ref<number | null>(null);
 const selectedAvailableItem = computed(() => availableItems.find(i => i.id === selectedAvailableItemId.value) ?? null);
 const selectedUserItems = computed(() => userItems.filter(item => selectedUserItemIds.value.includes(item.id)));
 
-const onSelectUserItem = (id: number) => {
-  const index = selectedUserItemIds.value.indexOf(id);
-
-  if (index !== -1) {
-    selectedUserItemIds.value.splice(index, 1);
-    return;
-  }
-
-  if (selectedUserItemIds.value.length < 6) {
-    selectedUserItemIds.value.push(id);
-  }
-};
-
-const onSelectAvailableItem = (id: number) => {
-  selectedAvailableItemId.value = id;
-}
-
-const resetSelection = (): void => {
-  selectedUserItemIds.value = [];
-  selectedAvailableItemId.value = null;
-}
-
+const { userItemActions, availableItemActions, resetAllSelections } = useItemActions(selectedUserItemIds, selectedAvailableItemId);
 </script>
 
 <template>
   <div class="main-page">
+
     <div class="main-page__row main-page__row--top">
       <div class="main-page__col">
-        <UserItemsSummary 
+        <UserItemsSummary
           :items="selectedUserItems"
           :selected-count="selectedUserItemIds.length" 
           :limit="6"
         />
       </div>
       <div class="main-page__col">
-        <SelectedItem 
-          :item="selectedAvailableItem" 
+        <AvailableSelectedItem
+          :item="selectedAvailableItem"
         />
       </div>
     </div>
-    
 
-    <div class="main-page__row main-page__row-bottom">
+    <div class="main-page__row main-page__row--bottom">
       <div class="main-page__col">
         <UserItemsList 
           :items="userItems" 
           :selected-ids="selectedUserItemIds" 
-          @select="onSelectUserItem" 
+          @select="userItemActions.toggle"
         />
       </div>
-      
       <div class="main-page__col">
         <AvailableItemsList 
           :items="availableItems" 
           :selected-id="selectedAvailableItemId" 
-          @select="onSelectAvailableItem" 
+          @select="availableItemActions.toggle"
         />
       </div>
     </div>
+
     <div class="main-page__row">
-      <BaseButton @click="resetSelection">Reset all</BaseButton>
+      <div class="main-page__col main-page__col--no-border">
+        <BaseButton @click="userItemActions.reset">Reset user item list</BaseButton>
+      </div>
+      <div class="main-page__col main-page__col--no-border">
+        <BaseButton @click="availableItemActions.reset">Reset available item list</BaseButton>
+      </div>
+    </div>
+
+    <div class="main-page__row">
+      <div class="main-page__col main-page__col--no-border">
+        <BaseButton @click="resetAllSelections">Reset all lists</BaseButton>
+      </div>
     </div>
   </div>
-
 </template>
 
 <style scoped lang="scss">
@@ -105,7 +95,11 @@ const resetSelection = (): void => {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    border: 2px solid black;
+    border: 2px solid $border-black;
+
+    &--no-border {
+      border: none;
+    }
   }
 }
 </style>

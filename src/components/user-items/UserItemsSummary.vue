@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from '@/types/item.type';
+import type { Item } from '@/types/item.type.ts';
 
 interface IProps {
   items: Item[],
@@ -12,7 +12,7 @@ defineProps<IProps>();
 
 <template>
   <div class="user-summary">
-    <div class="user-summary__items">
+    <div v-if="items.length" class="user-summary__items">
       <div 
         v-for="item in items"
         :key="item.id"
@@ -40,7 +40,7 @@ defineProps<IProps>();
   &__item {
     width: 80px;
     height: 80px;
-    border: 2px solid black;
+    border: 2px solid $border-black;
     display: flex;
     align-items: center;
     justify-content: center;

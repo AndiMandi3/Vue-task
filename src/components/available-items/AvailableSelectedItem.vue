@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@/types/item.type";
+import type { Item } from "@/types/item.type.ts";
 
 interface IProps {
   item: Item | null,

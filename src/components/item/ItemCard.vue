@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Item } from "@/types/item.type";
+import type { Item } from "@/types/item.type.ts";
 
 interface IProps {
 	item: Item,
@@ -17,14 +17,14 @@ defineProps<IProps>();
 .item-card {
 	width: 80px;
 	height: 80px;
-	border: 2px solid black;
+	border: 2px solid $border-black;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
 
   &--selected {
-    border: 2px solid rgb(32, 180, 32);
+    border: 2px solid $border-selected;
   }
 }
 </style>
