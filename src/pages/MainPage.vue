@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { availableItems, userItems } from "@/data/items.ts";
-import { useItemActions } from "@/composible/useItemActions.ts";
 import UserItemsSummary from "@/components/user-items/UserItemsSummary.vue";
 import AvailableSelectedItem from "@/components/available-items/AvailableSelectedItem.vue";
 import UserItemsList from "@/components/user-items/UserItemsList.vue";
@@ -14,7 +13,37 @@ const selectedAvailableItemId = ref<number | null>(null);
 const selectedAvailableItem = computed(() => availableItems.find(i => i.id === selectedAvailableItemId.value) ?? null);
 const selectedUserItems = computed(() => userItems.filter(item => selectedUserItemIds.value.includes(item.id)));
 
-const { userItemActions, availableItemActions, resetAllSelections } = useItemActions(selectedUserItemIds, selectedAvailableItemId);
+const userItemActions = {
+  toggle(id: number) {
+    const index = selectedUserItemIds.value.indexOf(id);
+
+    if (index !== -1) {
+      selectedUserItemIds.value.splice(index, 1);
+      return;
+    }
+
+    if (selectedUserItemIds.value.length < 6) {
+      selectedUserItemIds.value.push(id);
+    }
+  },
+  reset() {
+    selectedUserItemIds.value = [];
+  },
+};
+
+const availableItemActions = {
+  toggle(id: number) {
+    selectedAvailableItemId.value = id;
+  },
+  reset() {
+    selectedAvailableItemId.value = null;
+  },
+};
+
+const resetAllSelections = () => {
+  selectedUserItemIds.value = [];
+  selectedAvailableItemId.value = null;
+}
 </script>
 
 <template>

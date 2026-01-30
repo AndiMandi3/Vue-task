@@ -8,7 +8,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (e: "select", id: number): void,
+  select: [id: number],
 }
 
 defineProps<IProps>();
